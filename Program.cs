@@ -1,4 +1,5 @@
 ﻿using AdventOfCode2024.Day01;
+using AdventOfCode2024.Day02;
 
 namespace AdventOfCode2024
 {
@@ -6,7 +7,8 @@ namespace AdventOfCode2024
     {
         private static List<ISolution> solutions =
         [
-            new HistorianHysteria()
+            new HistorianHysteria(),
+            new RedNosedReports(),
         ];
         
         static void Main(string[] args)
