@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace AdventOfCode2024.Day01
+﻿namespace AdventOfCode2024.Day01
 {
     public class HistorianHysteria : ISolution
     {
@@ -12,31 +6,33 @@ namespace AdventOfCode2024.Day01
         public string PuzzleInput => File.ReadAllText("C:\\Users\\Ben\\source\\repos\\AdventOfCode2024\\Day01\\PuzzleInput");
         private string TestInput => File.ReadAllText("C:\\Users\\Ben\\source\\repos\\AdventOfCode2024\\Day01\\TestInput");
 
-        public string Solve(Part part)
+        public string Solve(Part part) => part switch
         {
-            if (part is Part.One)
+            Part.One => Solution(PuzzleInput, Part.One),
+            Part.Two => Solution(PuzzleInput, Part.Two),
+            _ => "N/A"
+        };
+
+        public string Test(Part part) => part switch
+        {
+            Part.One => Solution(TestInput, Part.One),
+            Part.Two => Solution(TestInput, Part.Two),
+            _ => "N/A"
+        };
+
+        private string Solution(string input, Part part)
+        {
+            var (left, right) = SplitInputIntoSortedLists(input);
+
+            return part switch
             {
-                var (left, right) = SplitInputIntoSortedLists(PuzzleInput);
-                var solution = FindDistancesAndSum(left, right);
-                return $"{solution}";
-            }
-            
-            else return "";
+                Part.One => $"{FindDistancesAndSum(left, right)}",
+                Part.Two => $"{FindSimilarityScoreAndSum(left, right)}",
+                _ => "N/A"
+            };
         }
 
-        public string Test(Part part)
-        {
-            if (part is Part.One)
-            {
-                var (leftList, rightList) = SplitInputIntoSortedLists(TestInput);
-                var solution = FindDistancesAndSum(leftList, rightList);
-                return $"{solution}";
-            }
-
-            else return "";
-        }
-
-        private (List<int> left, List<int> right) SplitInputIntoSortedLists(string input)
+        private static (List<int> left, List<int> right) SplitInputIntoSortedLists(string input)
         {
             List<int> leftList = [];
             List<int> rightList = [];
@@ -57,7 +53,18 @@ namespace AdventOfCode2024.Day01
             return (leftList, rightList);
         }
 
-        private int FindDistancesAndSum(List<int> left, List<int> right) =>
+        private static int FindDistancesAndSum(List<int> left, List<int> right) =>
             left.Zip(right, (l, r) => Math.Abs(l - r)).Sum();
+
+        private static int FindSimilarityScoreAndSum(List<int> left, List<int> right)
+        {
+            var score = 0;
+            foreach (var number in left)
+            {
+                var count = right.FindAll(x => x == number).Count;
+                score += number * count;
+            }
+            return score;
+        }
     }
 }
