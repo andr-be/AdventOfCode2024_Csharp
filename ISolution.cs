@@ -10,6 +10,7 @@ namespace AdventOfCode2024
     {
         public string Name { get; }
         public string PuzzleInput { get; }
+        public string TestInput { get; }
         public string Solve(Part part);
         public string Test(Part part);
     }

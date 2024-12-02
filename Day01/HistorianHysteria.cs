@@ -4,7 +4,7 @@
     {
         public string Name => "Day 01: Historian Hysteria";
         public string PuzzleInput => File.ReadAllText("C:\\Users\\Ben\\source\\repos\\AdventOfCode2024\\Day01\\PuzzleInput");
-        private string TestInput => File.ReadAllText("C:\\Users\\Ben\\source\\repos\\AdventOfCode2024\\Day01\\TestInput");
+        public string TestInput => File.ReadAllText("C:\\Users\\Ben\\source\\repos\\AdventOfCode2024\\Day01\\TestInput");
 
         public string Solve(Part part) => part switch
         {
