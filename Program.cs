@@ -1,5 +1,6 @@
 ﻿using AdventOfCode2024.Day01;
 using AdventOfCode2024.Day02;
+using AdventOfCode2024.Day03;
 
 namespace AdventOfCode2024
 {
@@ -9,11 +10,25 @@ namespace AdventOfCode2024
         [
             new HistorianHysteria(),
             new RedNosedReports(),
+            new MullItOver(),
         ];
         
         static void Main(string[] args)
         {
-            foreach (var solution in solutions)
+            if (args.Length == 1 && args[0] == "--single")
+            {
+                var solution = solutions.LastOrDefault();
+                Console.WriteLine(solution.Name);
+
+                Console.WriteLine("Part 1:");
+                Console.WriteLine(solution.Test(Part.One));
+                Console.WriteLine(solution.Solve(Part.One));
+
+                Console.WriteLine("Part 2:");
+                Console.WriteLine(solution.Test(Part.Two));
+                Console.WriteLine(solution.Solve(Part.Two));
+            }
+            else foreach (var solution in solutions)
             {
                 Console.WriteLine(solution.Name);
                 Console.WriteLine("Part 1:");

@@ -4,9 +4,11 @@
     {
         public string Name => "Day 02: Red-Nosed Reports";
 
-        public string PuzzleInput => "C:\\Users\\Ben\\source\\repos\\AdventOfCode2024\\Day02\\PuzzleInput";
+        private readonly string _baseDirectory = Directory.GetParent(AppContext.BaseDirectory)?.Parent?.Parent?.Parent?.FullName
+            ?? throw new DirectoryNotFoundException("Couldn't find project root");
 
-        public string TestInput => "C:\\Users\\Ben\\source\\repos\\AdventOfCode2024\\Day02\\TestInput";
+        public string PuzzleInput => File.ReadAllText(Path.Combine(_baseDirectory, "Day02", "PuzzleInput"));
+        public string TestInput => File.ReadAllText(Path.Combine(_baseDirectory, "Day02", "TestInput"));
 
         public string Solve(Part part) => part switch
         {
@@ -24,10 +26,10 @@
 
         private string Solution(Part part, string input)
         {
-            var puzzleInput = File.ReadAllLines(input);
             var safeCount = 0;
-            foreach (var line in puzzleInput)
+            foreach (var line in input.Split(Environment.NewLine))
             {
+                if (string.IsNullOrWhiteSpace(line)) continue;
                 int[] array = SplitIntoIntArray(line);
                 int[] deltas = CalculateDeltas(array);
                 if (SafeSequence(deltas))

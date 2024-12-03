@@ -3,8 +3,12 @@
     public class HistorianHysteria : ISolution
     {
         public string Name => "Day 01: Historian Hysteria";
-        public string PuzzleInput => File.ReadAllText("C:\\Users\\Ben\\source\\repos\\AdventOfCode2024\\Day01\\PuzzleInput");
-        public string TestInput => File.ReadAllText("C:\\Users\\Ben\\source\\repos\\AdventOfCode2024\\Day01\\TestInput");
+
+        private readonly string _baseDirectory = Directory.GetParent(AppContext.BaseDirectory)?.Parent?.Parent?.Parent?.FullName
+            ?? throw new DirectoryNotFoundException("Couldn't find project root");
+
+        public string PuzzleInput => File.ReadAllText(Path.Combine(_baseDirectory, "Day01", "PuzzleInput"));
+        public string TestInput => File.ReadAllText(Path.Combine(_baseDirectory, "Day01", "TestInput"));
 
         public string Solve(Part part) => part switch
         {
@@ -41,9 +45,11 @@
             {
                 if (string.IsNullOrEmpty(line)) continue;
                 var split = line.Split(' ');
+                
                 var leftInt = int.Parse(split.First());
-                var rightInt = int.Parse(split.Last());
                 leftList.Add(leftInt);
+
+                var rightInt = int.Parse(split.Last());
                 rightList.Add(rightInt);
             }
 
