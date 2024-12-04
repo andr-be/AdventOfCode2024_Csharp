@@ -1,6 +1,7 @@
 ﻿using AdventOfCode2024.Day01;
 using AdventOfCode2024.Day02;
 using AdventOfCode2024.Day03;
+using AdventOfCode2024.Day04;
 
 namespace AdventOfCode2024
 {
@@ -11,6 +12,7 @@ namespace AdventOfCode2024
             new HistorianHysteria(),
             new RedNosedReports(),
             new MullItOver(),
+            new CeresSearch(),
         ];
         
         static void Main(string[] args)
