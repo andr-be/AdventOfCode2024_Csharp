@@ -1,7 +1,8 @@
 {
   "profiles": {
     "AdventOfCode2024": {
-      "commandName": "Project"
+      "commandName": "Project",
+      "commandLineArgs": "--single"
     }
   }
 }
