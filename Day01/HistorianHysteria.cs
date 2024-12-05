@@ -1,30 +1,12 @@
 ﻿namespace AdventOfCode2024.Day01
 {
-    public class HistorianHysteria : ISolution
+    internal class HistorianHysteria : SolutionBase
     {
-        public string Name => "Day 01: Historian Hysteria";
+        public override string Name => "Day 01: Historian Hysteria";
 
-        private readonly string _baseDirectory = Directory.GetParent(AppContext.BaseDirectory)?.Parent?.Parent?.Parent?.FullName
-            ?? throw new DirectoryNotFoundException("Couldn't find project root");
+        public override int Day => 1;
 
-        public string PuzzleInput => File.ReadAllText(Path.Combine(_baseDirectory, "Day01", "PuzzleInput"));
-        public string TestInput => File.ReadAllText(Path.Combine(_baseDirectory, "Day01", "TestInput"));
-
-        public string Solve(Part part) => part switch
-        {
-            Part.One => Solution(PuzzleInput, Part.One),
-            Part.Two => Solution(PuzzleInput, Part.Two),
-            _ => "N/A"
-        };
-
-        public string Test(Part part) => part switch
-        {
-            Part.One => Solution(TestInput, Part.One),
-            Part.Two => Solution(TestInput, Part.Two),
-            _ => "N/A"
-        };
-
-        private string Solution(string input, Part part)
+        public override string Solution(Part part, string input)
         {
             var (left, right) = SplitInputIntoSortedLists(input);
 

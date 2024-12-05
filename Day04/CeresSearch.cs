@@ -2,31 +2,13 @@
 
 namespace AdventOfCode2024.Day04
 {
-    internal class CeresSearch : ISolution
+    internal class CeresSearch : SolutionBase
     {
-        public string Name => "Day 04: Ceres Search";
+        public override string Name => "Day 04: Ceres Search";
 
-        private readonly string _baseDirectory = Directory.GetParent(AppContext.BaseDirectory)?.Parent?.Parent?.Parent?.FullName
-            ?? throw new DirectoryNotFoundException("Couldn't find project root");
+        public override int Day => 4;
 
-        public string PuzzleInput => File.ReadAllText(Path.Combine(_baseDirectory, "Day04", "PuzzleInput"));
-        public string TestInput => File.ReadAllText(Path.Combine(_baseDirectory, "Day04", "TestInput"));
-
-        public string Solve(Part part) => part switch
-        {
-            Part.One => Solution(Part.One, PuzzleInput).ToString(),
-            Part.Two => Solution(Part.Two, PuzzleInput).ToString(),
-            _ => "N/A"
-        };
-
-        public string Test(Part part) => part switch
-        {
-            Part.One => Solution(Part.One, TestInput).ToString(),
-            Part.Two => Solution(Part.Two, TestInput).ToString(),
-            _ => "N/A"
-        };
-
-        private int Solution(Part part, string input)
+        public override string Solution(Part part, string input)
         {
             var coordinateArray = new CoordinateArray(input);
             Console.Write(coordinateArray.Print());
@@ -37,7 +19,7 @@ namespace AdventOfCode2024.Day04
                     .AllXCoordinates()
                     .Sum(coordinateArray.SpellsXmas);
 
-                return sum;
+                return sum.ToString();
             }
             else
             {
@@ -47,7 +29,7 @@ namespace AdventOfCode2024.Day04
                     .AllACoordinates()
                     .Sum(coordinateArray.IsX_Mas);
                 
-                return sum;
+                return sum.ToString();
             }
         }
     }

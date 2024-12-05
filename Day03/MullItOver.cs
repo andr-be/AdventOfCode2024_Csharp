@@ -2,35 +2,16 @@
 
 namespace AdventOfCode2024.Day03
 {
-    internal partial class MullItOver : ISolution
+    internal partial class MullItOver : SolutionBase
     {
-        public string Name => "Day 03: Mull It Over";
+        public override string Name => "Day 03: Mull It Over";
 
-        private readonly string _baseDirectory = Directory.GetParent(AppContext.BaseDirectory)?.Parent?.Parent?.Parent?.FullName
-            ?? throw new DirectoryNotFoundException("Couldn't find project root");
+        public override int Day => 3;
 
-        public string PuzzleInput => File.ReadAllText(Path.Combine(_baseDirectory, "Day03", "PuzzleInput"));
-        public string TestInput => File.ReadAllText(Path.Combine(_baseDirectory, "Day03", "TestInput"));
-        public string TestInput2 => File.ReadAllText(Path.Combine(_baseDirectory, "Day03", "TestInput2"));
-
-        public string Solve(Part part) => part switch
+        public override string Solution(Part part, string input) => part switch
         {
-            Part.One => Solution(Part.One, PuzzleInput).ToString(),
-            Part.Two => Solution(Part.Two, PuzzleInput).ToString(),
-            _ => "N/A"
-        };
-
-        public string Test(Part part) => part switch
-        {
-            Part.One => Solution(Part.One, TestInput).ToString(),
-            Part.Two => Solution(Part.Two, TestInput2).ToString(),
-            _ => "N/A"
-        };
-
-        private int Solution(Part part, string input) => part switch
-        {
-            Part.One => ProcessSimpleMultiplications(input),
-            Part.Two => ProcessStateAwareMultiplications(input),
+            Part.One => ProcessSimpleMultiplications(input).ToString(),
+            Part.Two => ProcessStateAwareMultiplications(input).ToString(),
             _ => throw new ArgumentException("Invalid part", nameof(part))
         };
 

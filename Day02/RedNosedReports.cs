@@ -1,30 +1,12 @@
 ﻿namespace AdventOfCode2024.Day02
 {
-    internal class RedNosedReports : ISolution
+    internal class RedNosedReports : SolutionBase
     {
-        public string Name => "Day 02: Red-Nosed Reports";
+        public override string Name => "Day 02: Red-Nosed Reports";
 
-        private readonly string _baseDirectory = Directory.GetParent(AppContext.BaseDirectory)?.Parent?.Parent?.Parent?.FullName
-            ?? throw new DirectoryNotFoundException("Couldn't find project root");
+        public override int Day => 2;
 
-        public string PuzzleInput => File.ReadAllText(Path.Combine(_baseDirectory, "Day02", "PuzzleInput"));
-        public string TestInput => File.ReadAllText(Path.Combine(_baseDirectory, "Day02", "TestInput"));
-
-        public string Solve(Part part) => part switch
-        {
-            Part.One => Solution(Part.One, PuzzleInput),
-            Part.Two => Solution(Part.Two, PuzzleInput),
-            _ => "N/A"
-        };
-
-        public string Test(Part part) => part switch
-        {
-            Part.One => Solution(Part.One, TestInput),
-            Part.Two => Solution(Part.Two, TestInput),
-            _ => "N/A"
-        };
-
-        private string Solution(Part part, string input)
+        public override string Solution(Part part, string input)
         {
             var safeCount = 0;
             foreach (var line in input.Split(Environment.NewLine))
