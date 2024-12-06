@@ -11,11 +11,13 @@ internal class GuardGallivant : SolutionBase
     public override string Solution(Part part, string input)
     {
         CoordinateArray array = new(input);
+
         Console.WriteLine(array.Print(200, 200));
 
         Coordinate start = array.Array
             .ToEnumerable<Coordinate>()
             .First(c => c.C == '^');
+
         Console.WriteLine("Start: " + start);
 
         Guard guard = new(array.Clone(), start);
@@ -23,16 +25,14 @@ internal class GuardGallivant : SolutionBase
         while (guard.CurrentPosition is not null)
             guard.Traverse();
 
-        var result = guard.VisitedCount;
-
-        Console.WriteLine(guard.Map.Print(200,200));
-        
         if (part is Part.One)
-            return result.ToString();
+        {
+            Console.WriteLine(guard.Map.Print());
+            return guard.VisitedCount.ToString();
+        }
 
-        var loopFinder = new ObstacleLoopFinder(array, start, guard.Visited);
-
-        result = loopFinder.FindLoops();
+        var loopFinder = new ObstacleLoopFinder(start, guard);
+        var result = loopFinder.FindLoops();
 
         return result.ToString();
     }
@@ -51,13 +51,13 @@ public class Guard
 {
     public CoordinateArray Map { get; init; }
 
-    public Coordinate? CurrentPosition { get; set; }
-
     public Direction Facing { get; set; }
 
-    public HashSet<Coordinate> Visited { get; set; } = [];
+    public Coordinate? CurrentPosition { get; private set; }
 
-    public Dictionary<Direction, (int row, int col)> TravelVectors = new()
+    public HashSet<Coordinate> Visited { get; private set; } = [];
+
+    private readonly static Dictionary<Direction, (int row, int col)> TravelVectors = new()
     {
         { Direction.Up,    (-1, +0) },
         { Direction.Right, (+0, +1) },
@@ -74,88 +74,87 @@ public class Guard
         Visited.Add(CurrentPosition with { C = 'X' });
     }
 
-    public bool WithinMap => Map.WithinArray(CurrentPosition);
-
     public void Traverse()
     {
-        var (newX, newY) = (CurrentPosition.X + TravelVectors[Facing].col, CurrentPosition.Y + TravelVectors[Facing].row);
-        var newC = Map.GetPoint(newX, newY)?.C;
-        if (newC is '#')
-        {
-            Facing = Facing is Direction.Left
-                ? Direction.Up
-                : Facing + 1;
+        var newX = CurrentPosition.X + TravelVectors[Facing].col;
+        var newY = CurrentPosition.Y + TravelVectors[Facing].row;
+        var targetPosition = Map.GetPoint(newX, newY)?.C;
 
-            //Console.WriteLine($"Obstacle encountered ({newX}, {newY}), turning {Facing}");
+        if (targetPosition is '#')
+        {
+            ChangeDirection();
         }
+
         else if (Map.WithinArray(newX, newY))
         {
-            CurrentPosition = Map.GetPoint(newX, newY)!;    // not null because we just checked
-            //Console.WriteLine($"Moving to new position, ({newX}, {newY})");
-            if (newC is not '#' or 'X')
-            {
-                var newPos = CurrentPosition with { C = 'X' };
-                Map.Array[newX, newY] = newPos;
-                Visited.Add(newPos);
-            }
+            MoveToNewPosition(newX, newY, targetPosition);
         }
+
         else
         {
-            Console.WriteLine($"Exited map! Last position was {CurrentPosition}");
             CurrentPosition = null;
         }
     }
 
-    public int VisitedCount => Visited.Count;
+    private void MoveToNewPosition(int newX, int newY, char? newC)
+    {
+        CurrentPosition = Map.GetPoint(newX, newY)!;    // not null because we just checked
+        if (newC is not '#' or 'X')
+        {
+            var newPos = CurrentPosition with { C = 'X' };
+            Map.Array[newX, newY] = newPos;
+            Visited.Add(newPos);
+        }
+    }
+
+    private void ChangeDirection() => 
+        Facing = Facing is Direction.Left ? Direction.Up : Facing + 1;
+
+    public int VisitedCount => 
+        Visited.Count;
 }
 
-public class ObstacleLoopFinder : Guard
+public class ObstacleLoopFinder(Coordinate start, Guard guard)
 {
-    public HashSet<(Coordinate, Direction)> PreviousStates { get; set; } = [];
+    public Coordinate StartPoint { get; init; } = start;
 
-    public Coordinate StartPoint { get; init; }
-    
-    public ObstacleLoopFinder(CoordinateArray map, Coordinate start, HashSet<Coordinate> visited) 
-        : base(map, start)
-    {
-        Visited = visited;
-        StartPoint = start;
-    }
+    public Guard Guard { get; init; } = guard;
+ 
+    private HashSet<(Coordinate, Direction)> PreviousStates { get; set; } = [];
 
     public int FindLoops()
     {
-        
+
         HashSet<CoordinateArray> parallelUniverses = [];
         HashSet<(int, int)> addedObstacles = [];
-        foreach (var coordinate in Visited)
+        foreach (var coordinate in Guard.Visited)
         {
             var (x, y) = (coordinate.X, coordinate.Y);
-            if (Map.WithinArray(x, y) == false 
-            || (coordinate.X == StartPoint.X && coordinate.Y == StartPoint.Y))
-            {
-                continue;
-            }
 
-            var newMap = Map.Clone();
-            newMap.Array[x, y] = new Coordinate(x, y, '#');
-            if (addedObstacles.Add((x, y)))
-                parallelUniverses.Add(newMap);
+            if (BadObstaclePlacement(coordinate, x, y))
+                continue;
+
+            CreateNewParallelUniverse(parallelUniverses, addedObstacles, x, y);
         }
 
+        int totalLoops = FindAllLoopWorlds(parallelUniverses);
+
+        return totalLoops;
+    }
+
+    private int FindAllLoopWorlds(HashSet<CoordinateArray> parallelUniverses)
+    {
         int totalLoops = 0;
         int currentPU = 1;
         foreach (var map in parallelUniverses)
         {
-            Console.WriteLine($"PU: {currentPU}\n" + map.Print());
             const int MAX_STEPS = 10000;
             int steps = 0;
             bool isLoop = false;
 
             var newGuard = new Guard(map, StartPoint);
             PreviousStates = [(StartPoint with { C = 'X' }, newGuard.Facing)];
-            while (CurrentPosition is not null 
-                && steps < MAX_STEPS 
-                && isLoop is false)
+            while (steps < MAX_STEPS && isLoop is false)
             {
                 newGuard.Traverse();
 
@@ -164,22 +163,39 @@ public class ObstacleLoopFinder : Guard
                 var state = (newGuard.CurrentPosition, newGuard.Facing);
                 if (PreviousStates.Contains(state))
                 {
-                    Console.WriteLine($"Loop found! (PU: {currentPU})\n{map.Print()}");
+                    Console.WriteLine($"PU: {currentPU} is a loop! {steps} steps.");
                     isLoop = true;
                     break;
                 }
                 PreviousStates.Add(state);
-                
+
                 steps++;
             }
 
-            if (isLoop) 
+            if (isLoop)
                 totalLoops++;
 
             currentPU++;
         }
 
-        // 1509 too low!
         return totalLoops;
     }
+
+    private void CreateNewParallelUniverse(HashSet<CoordinateArray> parallelUniverses,
+                                           HashSet<(int, int)> addedObstacles,
+                                           int x, int y)
+    {
+        var newMap = Guard.Map.Clone();
+
+        newMap.Array[x, y] = new Coordinate(x, y, '#');
+
+        if (addedObstacles.Add((x, y)))
+            parallelUniverses.Add(newMap);
+    }
+
+    private bool BadObstaclePlacement(Coordinate coordinate, int x, int y) =>
+        Guard.Map.WithinArray(x, y) is false || IsStartPoint(coordinate);
+
+    private bool IsStartPoint(Coordinate coordinate) => 
+        coordinate.X == StartPoint.X && coordinate.Y == StartPoint.Y;
 }
