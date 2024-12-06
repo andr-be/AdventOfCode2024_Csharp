@@ -1,4 +1,5 @@
 ﻿using System.Security;
+using AdventOfCode2024.Utilities;
 
 namespace AdventOfCode2024.Day04
 {
@@ -10,7 +11,7 @@ namespace AdventOfCode2024.Day04
 
         public override string Solution(Part part, string input)
         {
-            var coordinateArray = new CoordinateArray(input);
+            var coordinateArray = new WordsearchArray(input);
             Console.Write(coordinateArray.Print());
 
             if (part is Part.One)
@@ -34,65 +35,9 @@ namespace AdventOfCode2024.Day04
         }
     }
 
-    internal class CoordinateArray
+    internal class WordsearchArray(string characterGrid) 
+        : CoordinateArray(characterGrid)
     {
-        #region CoordinateArray
-        public Coordinate[,] Array { get; init; }
-        public int Height { get; init; }
-        public int Width { get; init; }
-
-        public CoordinateArray(string characterGrid)
-        {
-            var splitGrid = characterGrid.Split(Environment.NewLine)
-                .Where(line => !string.IsNullOrWhiteSpace(line))
-                .ToArray();
-
-            Height = splitGrid.Length;
-            Width = splitGrid[0].Length;
-
-            Array = new Coordinate[Width, Height];
-            for (int row = 0; row < Height; row++)
-            {
-                for (int col = 0; col < Width; col++)
-                {
-                    char c = splitGrid[row][col];
-                    Array[col, row] = new Coordinate(col, row, c, c is 'X');
-                }
-            }
-        }
-
-        public Coordinate? GetPoint(int x, int y) => 
-            WithinArray(x, y) ? Array[x, y] : null;
-
-        public bool WithinArray(Coordinate c) =>
-            WithinArray(c.X, c.Y);
-
-        public bool WithinArray(int x, int y) =>
-            x < Width && x >= 0 
-         && y < Height && y >= 0;
-
-        public string Print()
-        {
-            string print = "   ";
-            for (int x = 0; x < Width; x++)
-            {
-                print += $"{x,3} ";
-            }
-            print += '\n';
-            for (int i = 0; i < Height; i++)
-            {
-                string newLine = $"{i,3}  ";
-                for (int j = 0; j < Width; j++)
-                {
-                    newLine += $"{Array[j, i].C}   ";
-                }
-                newLine += '\n';
-                print += newLine;
-            }
-            return print;
-        }
-        #endregion
-
         #region Part 1
         public int SpellsXmas(Coordinate c)
         {
@@ -112,7 +57,7 @@ namespace AdventOfCode2024.Day04
 
         public List<Coordinate> AllXCoordinates() =>
             Array.ToEnumerable<Coordinate>()
-                 .Where(c => c.Start)
+                 .Where(c => c.C is 'X')
                  .ToList();
 
         private enum Direction
@@ -197,7 +142,7 @@ namespace AdventOfCode2024.Day04
         private bool CheckXmas(Coordinate c, Direction d)
         {
             // If the character isn't an X, or the coordinate is out of bounds, it can't spell XMAS
-            if (c.Start is not true || WithinArray(c) is not true) 
+            if (c.C is not 'X' || WithinArray(c) is not true) 
                 return false;
 
             List<Coordinate> candidates = GetXmasCharacters(c, d);
@@ -273,19 +218,5 @@ namespace AdventOfCode2024.Day04
                 .ToList()!;
         }
         #endregion
-    }
-
-    internal record Coordinate(int X, int Y, char C, bool Start)
-    {
-        public override string ToString() => $"({X},{Y}):[{C}]";
-    }
-
-    public static class ArrayExtensions
-    {
-        public static IEnumerable<T> ToEnumerable<T>(this Array target)
-        {
-            foreach (var item in target)
-                yield return (T)item;
-        }
     }
 }
