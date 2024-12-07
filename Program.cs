@@ -10,6 +10,7 @@
             new Day04.CeresSearch(),
             new Day05.PrintQueue(),
             new Day06.GuardGallivant(),
+            new Day07.BridgeRepair(),
         ];
         
         static void Main(string[] args)
