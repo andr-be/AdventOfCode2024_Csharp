@@ -74,17 +74,35 @@
 
         public CoordinateArray Clone()
         {
-            string cloned = string.Empty;
+            var clone = new CoordinateArray(Height, Width);
+
+            // Direct array copy without string intermediary
             for (int row = 0; row < Height; row++)
             {
-                string cloneRow = string.Empty;
                 for (int col = 0; col < Width; col++)
                 {
-                    cloneRow += Array[col, row].C;
+                    // Create new Coordinate instance with same values
+                    clone.Array[col, row] = new Coordinate(col, row, Array[col, row].C);
                 }
-                cloned += cloneRow + "\r\n";
             }
-            return new CoordinateArray(cloned);
+
+            return clone;
+        }
+
+        // Optional: If you frequently clone large arrays, you could add a parallel version
+        public CoordinateArray CloneParallel()
+        {
+            var clone = new CoordinateArray(Height, Width);
+
+            Parallel.For(0, Height, row =>
+            {
+                for (int col = 0; col < Width; col++)
+                {
+                    clone.Array[col, row] = new Coordinate(col, row, Array[col, row].C);
+                }
+            });
+
+            return clone;
         }
     }
 

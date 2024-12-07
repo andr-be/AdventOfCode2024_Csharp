@@ -20,7 +20,7 @@ internal class GuardGallivant : SolutionBase
 
         Console.WriteLine("Start: " + start);
 
-        Guard guard = new(array.Clone(), start);
+        Guard guard = new(array.CloneParallel(), start);
 
         while (guard.CurrentPosition is not null)
             guard.Traverse();
@@ -36,7 +36,6 @@ internal class GuardGallivant : SolutionBase
 
         return result.ToString();
     }
-
 }
 
 public enum Direction
@@ -124,7 +123,6 @@ public class ObstacleLoopFinder(Coordinate start, Guard guard)
 
     public int FindLoops()
     {
-
         HashSet<CoordinateArray> parallelUniverses = [];
         HashSet<(int, int)> addedObstacles = [];
         foreach (var coordinate in Guard.Visited)
@@ -163,7 +161,7 @@ public class ObstacleLoopFinder(Coordinate start, Guard guard)
                 var state = (newGuard.CurrentPosition, newGuard.Facing);
                 if (PreviousStates.Contains(state))
                 {
-                    Console.WriteLine($"PU: {currentPU} is a loop! {steps} steps.");
+                    //Console.WriteLine($"PU: {currentPU} is a loop! {steps} steps.");
                     isLoop = true;
                     break;
                 }
@@ -185,12 +183,14 @@ public class ObstacleLoopFinder(Coordinate start, Guard guard)
                                            HashSet<(int, int)> addedObstacles,
                                            int x, int y)
     {
-        var newMap = Guard.Map.Clone();
+        if (!addedObstacles.Add((x, y)))
+            return;
+        
+        var newMap = Guard.Map.CloneParallel();
 
         newMap.Array[x, y] = new Coordinate(x, y, '#');
 
-        if (addedObstacles.Add((x, y)))
-            parallelUniverses.Add(newMap);
+        parallelUniverses.Add(newMap);
     }
 
     private bool BadObstaclePlacement(Coordinate coordinate, int x, int y) =>
