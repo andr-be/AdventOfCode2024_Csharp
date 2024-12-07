@@ -54,11 +54,11 @@ namespace AdventOfCode2024.Day05
             List<int> newMidPoints = [];
             foreach (var update in invalidUpdates)
             {
-                Console.WriteLine($"Incorrect: [{string.Join(", ", update)}]");
+                //Console.WriteLine($"Incorrect: [{string.Join(", ", update)}]");
                 var fixedUpdate = TopologicalSort(update, pageOrderings);
 
                 newMidPoints.Add(fixedUpdate[fixedUpdate.Count / 2]);
-                Console.WriteLine($"Fixed: [{string.Join(", ", fixedUpdate)}] ({newMidPoints.Last()}");
+                //Console.WriteLine($"Fixed: [{string.Join(", ", fixedUpdate)}] ({newMidPoints.Last()}");
             }
 
             return newMidPoints.Sum().ToString();
@@ -77,12 +77,18 @@ namespace AdventOfCode2024.Day05
 
         private static List<int> TopologicalSort(List<int> update, List<Ordering> orderings)
         {
-            // Build the graph of dependencies
+            var updateSet = update.ToHashSet(); // Do once
             var graph = new Dictionary<int, HashSet<int>>();
+
+            // Prefilter orderings to only those relevant to this update
+            var relevantOrderings = orderings
+                .Where(o => updateSet.Contains(o.Before) && updateSet.Contains(o.After))
+                .ToList();
+
             foreach (var num in update)
                 graph[num] = [];
 
-            foreach (var order in orderings)
+            foreach (var order in relevantOrderings)
             {
                 if (update.Contains(order.Before) && update.Contains(order.After))
                 {
