@@ -16,7 +16,7 @@
                 int[] deltas = CalculateDeltas(array);
                 if (SafeSequence(deltas))
                 {
-                    Console.WriteLine($"{line} is safe.");
+                    //Console.WriteLine($"{line} is safe.");
                     safeCount++;
                 }
                 else 
@@ -32,7 +32,7 @@
                             break;
                         }
                     }
-                    Console.WriteLine(isUnsafe ? $"{line} is unsafe!" : $"{line} is safe with DAMPENER applied!");
+                    //Console.WriteLine(isUnsafe ? $"{line} is unsafe!" : $"{line} is safe with DAMPENER applied!");
                 }
             }
             return safeCount.ToString();

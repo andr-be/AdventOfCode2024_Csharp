@@ -12,7 +12,7 @@ namespace AdventOfCode2024.Day04
         public override string Solution(Part part, string input)
         {
             var coordinateArray = new WordsearchArray(input);
-            Console.Write(coordinateArray.Print());
+            //Console.Write(coordinateArray.Print());
 
             if (part is Part.One)
             {
@@ -48,7 +48,7 @@ namespace AdventOfCode2024.Day04
                 if (CheckXmas(c, (Direction)i))
                 {
                     count++;
-                    Console.WriteLine($"XMAS found! Starting @ {c} going {(Direction)i} ({count} found for ({c.X},{c.Y}))");
+                    //Console.WriteLine($"XMAS found! Starting @ {c} going {(Direction)i} ({count} found for ({c.X},{c.Y}))");
                 }
             }
 
@@ -168,9 +168,9 @@ namespace AdventOfCode2024.Day04
 
             List<Coordinate> candidates = GetX_MasCharacters(c);
 
-            Console.WriteLine($"Candidate: {c}:");
-            foreach (Coordinate candidate in candidates)
-                Console.WriteLine("\t" + candidate);
+            //Console.WriteLine($"Candidate: {c}:");
+            //foreach (Coordinate candidate in candidates)
+                //Console.WriteLine("\t" + candidate);
 
             return CheckX_MasSSequence(candidates);
         }
@@ -181,24 +181,24 @@ namespace AdventOfCode2024.Day04
 
             if (candidates.Count < 4)
             {
-                Console.WriteLine($"{sequence} is invalid length");
+                //Console.WriteLine($"{sequence} is invalid length");
                 return false;
             }
 
             if (candidates.Where(c => c.C is 'M').Count() != 2 
             ||  candidates.Where(c => c.C is 'S').Count() != 2)
             {
-                Console.WriteLine($"{sequence} contains incorrect letters");
+                //Console.WriteLine($"{sequence} contains incorrect letters");
                 return false;
             }
 
             if (sequence is "SMMS" or "MSSM")
             {
-                Console.WriteLine($"{sequence} is MAM/SAS");
+                //Console.WriteLine($"{sequence} is MAM/SAS");
                 return false;
             }
 
-            Console.WriteLine($"{sequence} is valid X-MAS!");
+            //Console.WriteLine($"{sequence} is valid X-MAS!");
 
             return true;
         }

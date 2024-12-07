@@ -12,13 +12,13 @@ internal class GuardGallivant : SolutionBase
     {
         CoordinateArray array = new(input);
 
-        Console.WriteLine(array.Print(200, 200));
+        //Console.WriteLine(array.Print(200, 200));
 
         Coordinate start = array.Array
             .ToEnumerable<Coordinate>()
             .First(c => c.C == '^');
 
-        Console.WriteLine("Start: " + start);
+        //Console.WriteLine("Start: " + start);
 
         Guard guard = new(array.CloneParallel(), start);
 
@@ -27,7 +27,7 @@ internal class GuardGallivant : SolutionBase
 
         if (part is Part.One)
         {
-            Console.WriteLine(guard.Map.Print());
+            //Console.WriteLine(guard.Map.Print());
             return guard.VisitedCount.ToString();
         }
 
