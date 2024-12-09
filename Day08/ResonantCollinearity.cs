@@ -20,23 +20,15 @@ internal class ResonantCollinearity : SolutionBase
                 .Where(a => a.Frequency == frequency)
                 .ToArray();
 
-            List<Antenna>? newAntinodes = [];
-            if (part is Part.One)
-            {
-                newAntinodes = Enumerable.Range(0, tunedAntennas.Length - 1)
-                    .SelectMany(i => Enumerable.Range(i + 1, tunedAntennas.Length - i - 1)
-                        .Select(j => antennaMap.GenerateSimpleAntinodes(tunedAntennas[i], tunedAntennas[j])))
-                    .SelectMany(x => x)
-                    .ToList();
-            }
-            else
-            {
-                newAntinodes = Enumerable.Range(0, tunedAntennas.Length - 1)
-                    .SelectMany(i => Enumerable.Range(i + 1, tunedAntennas.Length - i - 1)
-                        .Select(j => antennaMap.GenerateComplexAntinodes(tunedAntennas[i], tunedAntennas[j])))
-                    .SelectMany(x => x)
-                    .ToList();
-            }
+            var newAntinodes = Enumerable.Range(0, tunedAntennas.Length - 1)
+            .SelectMany(i => Enumerable.Range(i + 1, tunedAntennas.Length - i - 1)
+                .Select(j => part is Part.One
+                    ? antennaMap.GenerateSimpleAntinodes(tunedAntennas[i], tunedAntennas[j])
+                    : antennaMap.GenerateComplexAntinodes(tunedAntennas[i], tunedAntennas[j])
+                )
+            )
+            .SelectMany(x => x)
+            .ToList();
 
             antinodes.AddRange(newAntinodes);
         }
