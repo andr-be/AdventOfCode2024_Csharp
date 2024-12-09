@@ -4,13 +4,14 @@
     {
         private static List<ISolution> solutions =
         [
-            //new Day01.HistorianHysteria(),
-            //new Day02.RedNosedReports(),
-            //new Day03.MullItOver(),
-            //new Day04.CeresSearch(),
-            //new Day05.PrintQueue(),
-            //new Day06.GuardGallivant(),
+            new Day01.HistorianHysteria(),
+            new Day02.RedNosedReports(),
+            new Day03.MullItOver(),
+            new Day04.CeresSearch(),
+            new Day05.PrintQueue(),
+            new Day06.GuardGallivant(),
             new Day07.BridgeRepair(),
+            new Day08.ResonantCollinearity(),
         ];
 
         static void Main(string[] args)
