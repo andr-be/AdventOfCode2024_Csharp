@@ -12,6 +12,7 @@
             new Day06.GuardGallivant(),
             new Day07.BridgeRepair(),
             new Day08.ResonantCollinearity(),
+            new Day09.DiskFragmenter(),
         ];
 
         static void Main(string[] args)
